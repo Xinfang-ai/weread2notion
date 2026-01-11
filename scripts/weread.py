@@ -109,7 +109,16 @@ def get_review_list(bookId):
 def check(bookId):
     """检查是否已经插入过 如果已经插入了就删除"""
     filter = {"property": "BookId", "rich_text": {"equals": bookId}}
-    response = client.databases.query(database_id=database_id, filter=filter)
+    
+    # 获取数据源 ID
+    response = client.databases.retrieve(database_id=database_id)
+    data_source_id = response["data_sources"][0]["id"]  # 获取第一个数据源的 ID
+    
+    # 使用 data_source_id 进行查询
+    response = client.data_sources.query(
+        data_source_id=data_source_id, filter=filter
+    )
+    
     for result in response["results"]:
         try:
             client.blocks.delete(block_id=result["id"])
