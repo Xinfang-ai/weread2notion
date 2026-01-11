@@ -222,12 +222,20 @@ def get_sort():
             "direction": "descending",
         }
     ]
-    response = client.databases.query(
-        database_id=database_id, filter=filter, sorts=sorts, page_size=1
+    
+    # 获取数据源 ID
+    response = client.databases.retrieve(database_id=database_id)
+    data_source_id = response["data_sources"][0]["id"]  # 获取第一个数据源的 ID
+    
+    # 使用 data_source_id 进行查询
+    response = client.data_sources.query(
+        data_source_id=data_source_id, filter=filter, sorts=sorts, page_size=1
     )
+    
     if len(response.get("results")) == 1:
         return response.get("results")[0].get("properties").get("Sort").get("number")
     return 0
+
 
 
 def get_children(chapter, summary, bookmark_list):
