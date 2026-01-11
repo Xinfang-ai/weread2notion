@@ -380,7 +380,7 @@ def get_cookie():
 def extract_page_id():
     url = os.getenv("NOTION_PAGE")
     if not url:
-        url = os.getenv("NOTION_DATABASE_ID")
+        url = os.getenv("DATABASE_ID")
     if not url:
         raise Exception("没有找到NOTION_PAGE，请按照文档填写")
     # 正则表达式匹配 32 个字符的 Notion page_id
