@@ -222,19 +222,12 @@ def get_sort():
             "direction": "descending",
         }
     ]
-    # 获取数据源 ID
-    response = client.databases.retrieve(database_id=database_id)
-    data_source_id = response["data_sources"][0]["id"]
-    
-    # 使用 data_source_id 查询
-    response = client.data_sources.query(
-        data_source_id=data_source_id, filter=filter, sorts=sorts, page_size=1
+    response = client.databases.query(
+        database_id=database_id, filter=filter, sorts=sorts, page_size=1
     )
-    
     if len(response.get("results")) == 1:
         return response.get("results")[0].get("properties").get("Sort").get("number")
     return 0
-
 
 
 def get_children(chapter, summary, bookmark_list):
@@ -380,7 +373,7 @@ def get_cookie():
 def extract_page_id():
     url = os.getenv("NOTION_PAGE")
     if not url:
-        url = os.getenv("DATABASE_ID")
+        url = os.getenv("NOTION_DATABASE_ID")
     if not url:
         raise Exception("没有找到NOTION_PAGE，请按照文档填写")
     # 正则表达式匹配 32 个字符的 Notion page_id
@@ -403,7 +396,6 @@ if __name__ == "__main__":
     session.cookies = parse_cookie_string(weread_cookie)
     client = Client(auth=notion_token, log_level=logging.ERROR)
     session.get(WEREAD_URL)
-    print(f"Database ID: {database_id}")
     latest_sort = get_sort()
     books = get_notebooklist()
     if books != None:
